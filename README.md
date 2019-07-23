@@ -42,3 +42,16 @@ spawtify.widget({
 ```
 
 Note: Currently the widget can only be moved to right edge of the screen. Will add more options once I get time.
+
+### Icons
+
+All the icons can be changed using following theme variables.
+
+``` Lua
+theme.spotify_play_button_icon
+theme.spotify_pause_button_icon
+theme.spotify_prev_button_icon
+theme.spotify_next_button_icon
+theme.spotify_icon
+theme.spotify_error_icon
+```
