@@ -10,12 +10,12 @@ local spotify = {}
 local dir = gears.filesystem.get_configuration_dir ()
 
 local icons = {}
-icons.spotify_play_button_icon = dir.."spawtify/icons/play-spotify.png"
-icons.spotify_pause_button_icon = dir.."spawtify/icons/pause-spotify.png"
-icons.spotify_prev_button_icon = dir.."spawtify/icons/previous-spotify.png"
-icons.spotify_next_button_icon = dir.."spawtify/icons/next-spotify.png"
-icons.spotify_icon = dir.."spawtify/icons/spotify-spotify.png"
-icons.error_icon = dir.."spawtify/icons/ghost.png"
+icons.spotify_play_button_icon = dir.."spawtify/icons/play-spotify.png" or beautiful.spotify_play_button_icon
+icons.spotify_pause_button_icon = dir.."spawtify/icons/pause-spotify.png" or beautiful.spotify_pause_button_icon
+icons.spotify_prev_button_icon = dir.."spawtify/icons/previous-spotify.png" or beautiful.spotify_prev_button_icon
+icons.spotify_next_button_icon = dir.."spawtify/icons/next-spotify.png" or beautiful.spotify_next_button_icon
+icons.spotify_icon = dir.."spawtify/icons/spotify-spotify.png" or beautiful.spotify_icon
+icons.error_icon = dir.."spawtify/icons/ghost.png" or beautiful.spotify_error_icon
 
 local spotify_commands = {}
 spotify_commands.status = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus'|egrep -A 1 \"string\"|cut -b 26-|cut -d '\"' -f 1|egrep -v ^$"
@@ -186,6 +186,8 @@ end
 --[[-----------------------------------------]]
 
 spotify.widget = function(o)
+    awful.spawn("mkdir -p"..dir.."spawtify/.cache")
+
     local s = o.screen
     width  = 460 or o.width
     height = 600 or o.height
