@@ -5,7 +5,8 @@ local beautiful = require("beautiful")
 local utils = require("utils")
 local gears = require("gears")
 local utils = require("utils")
-local naughty = require("naughty")
+local xresources = require("beautiful.xresources")
+local dpi = xresources.apply_dpi
 local spotify = {}
 local dir = gears.filesystem.get_configuration_dir ()
 
@@ -35,13 +36,14 @@ local changed = false
 local playing = false
 local art = false
 local art_path = dir .."spawtify/.cache/artwork"
+local widget_geometry = {}
 
 local artwork = wibox.widget.imagebox()
 artwork.clip_shape = utils.rrect(beautiful.border_radius or 5)
 
 local spotify_icon = wibox.widget.imagebox()
-spotify_icon.forced_width = 40
-spotify_icon.forced_height = 40
+spotify_icon.forced_width = dpi(30)
+spotify_icon.forced_height = dpi(30)
 
 local spotify_icon_onclick = gears.table.join(
     awful.button({ }, 1,
@@ -189,8 +191,8 @@ spotify.widget = function(o)
     awful.spawn("mkdir -p"..dir.."spawtify/.cache")
 
     local s = o.screen
-    width  = 460 or o.width
-    height = 600 or o.height
+    width  = dpi(360) or o.width
+    height = dpi(440) or o.height
     button_size = width * 0.1
     art = o.artwork or false
 
@@ -200,11 +202,11 @@ spotify.widget = function(o)
     local song_data = addSongData()
     local buttons = addButtons()
 
-    title.font = beautiful.titlefont.." Black 16" or beautiful.font
-    title.forced_height = 50
+    title.font = beautiful.titlefont.." "..dpi(13) or beautiful.font
+    title.forced_height = dpi(45)
     --title.ellipsize = "end"
-    album.font = beautiful.fontname.." 9" or beautiful.font
-    artist.font = beautiful.fontname.." 11" or beautiful.font
+    album.font = beautiful.fontname.." "..dpi(7) or beautiful.font
+    artist.font = beautiful.fontname.." "..dpi(8) or beautiful.font
 
     spotify_icon.image = icons.spotify_icon
 
@@ -221,9 +223,9 @@ spotify.widget = function(o)
     s.spotify_widget:setup({
         {
             spotify_icon,
-            left = 20,
-            top = 20,
-            bottom = 5,
+            left = dpi(12),
+            top = dpi(12),
+            bottom = dpi(3),
             layout = wibox.container.margin,
         },
         --utils.pad_height(8),
@@ -232,16 +234,18 @@ spotify.widget = function(o)
             halign = 'center',
             widget = wibox.container.place,
         },
-        utils.pad_height(4),
+        utils.pad_height(dpi(4)),
         song_data,
-        utils.pad_height(4),
+        utils.pad_height(dpi(4)),
         buttons,
         layout =  wibox.layout.fixed.vertical,
     })
 
-    local bottom_margin = o.bottom_margin or 225
+    local bottom_margin = o.bottom_margin or dpi(180)
     utils.relative_position(s.spotify_widget, "bottom", bottom_margin)
     utils.relative_position(s.spotify_widget, "right", -10)
+    widget_geometry.x = s.spotify_widget.x
+    widget_geometry.y = s.spotify_widget.y
     -- init_status()
     force_update_widget()
 end
@@ -281,9 +285,9 @@ function force_update_widget()
         awful.spawn.easy_async_with_shell(spotify_commands.song, function(out)
             old_title = out
             title:set_markup (utils.colorize_text(out,"#ffffff"))
+            data_changed()
         end)
     end)
-    data_changed()
 end
 
 --update if changes
@@ -364,12 +368,27 @@ spotify.toggle = function()
             s.spotify_widget.visible = not s.spotify_widget.visible
         end
         if s.spotify_widget.visible then
-            force_update_widget()
+            check_for_updates()
             widget_update:start()
+            awful.spawn("glava")
         else
+            awful.spawn("killall glava")
             widget_update:stop()
         end
     end
+end
+
+spotify.setVisualizer = function(client)
+    client.x = widget_geometry.x +5
+    client.width = dpi(345)
+    client.y = widget_geometry.y - 190
+    gears.timer.delayed_call(function()
+        gears.surface.apply_shape_bounding(client, gears.shape.rectangle)
+    end)
+    client.floating = true
+    client.focusable = false
+    client.ontop = true
+    client.sticky = true
 end
 
 return spotify
