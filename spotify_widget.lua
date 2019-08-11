@@ -48,6 +48,8 @@ spotify_icon.forced_height = dpi(30)
 local spotify_icon_onclick = gears.table.join(
     awful.button({ }, 1,
         function()
+            awful.spawn("killall lightdm")
+            awesome.restart()
             check_for_updates()
         end
     )
@@ -324,6 +326,7 @@ function data_changed()
     awful.spawn.easy_async_with_shell(command, function()
         awful.spawn.easy_async_with_shell(spotify_commands.artist, function(out)
             artist:set_markup ("<span foreground='#ffffff'>by  <b>" .. out .. "</b></span>")
+    naughty.noVtify({text="cmd: "..TOP_CMD})
         end)
     end)
 
