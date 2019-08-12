@@ -253,9 +253,7 @@ spotify.widget = function(o)
         --    the transparent rectangular wibox
         --    and this rounded rectangle on top of it
         shape = utils.rrect(beautiful.borderradius), 
-    })
-
-    
+    })    
     
     local bottom_margin = o.bottom_margin or dpi(180)
     utils.relative_position(s.spotify_widget, "bottom", bottom_margin)
