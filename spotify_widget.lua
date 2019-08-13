@@ -217,30 +217,42 @@ spotify.widget = function(o)
         visible = true,
         width = width,
         height = height,
-        bg = "#000000" or o.fg,
-        shape = utils.rrect(beautiful.border_radius),
+        bg = "#00000000", -- make the wibox itself fully transparent (and then we'll draw the widget inside it)
+        shape = gears.shape.rectangle, -- make the `wibox` a rectangle
+        type = "dock", -- this should tell compton (or the compositor you're using, that it doesn't want shadows around it.
+        -- if you still see the transparent rectangle with the shadows and it looks weird, you should configure compton to
+        -- not draw shadows on windows of type "dock"
         ontop = true,
     })
 
     s.spotify_widget:setup({
         {
-            spotify_icon,
-            left = dpi(12),
-            top = dpi(12),
-            bottom = dpi(3),
-            layout = wibox.container.margin,
+            {
+                spotify_icon,
+                left = dpi(12),
+                top = dpi(12),
+                bottom = dpi(3),
+                layout = wibox.container.margin,
+            },
+            --utils.pad_height(8),
+            {
+                getArtwork(),
+                halign = 'center',
+                widget = wibox.container.place,
+            },
+            utils.pad_height(dpi(4)),
+            song_data,
+            utils.pad_height(dpi(4)),
+            buttons,
+            layout =  wibox.layout.fixed.vertical,
         },
-        --utils.pad_height(8),
-        {
-            getArtwork(),
-            halign = 'center',
-            widget = wibox.container.place,
-        },
-        utils.pad_height(dpi(4)),
-        song_data,
-        utils.pad_height(dpi(4)),
-        buttons,
-        layout =  wibox.layout.fixed.vertical,
+        widget = wibox.container.background,
+        bg = "#000000" or o.fg,
+        -- and we do rounded corners here.
+        -- This way AwesomeWM can apply anti-aliasing, since it's between two of its own shapes:
+        --    the transparent rectangular wibox
+        --    and this rounded rectangle on top of it
+        shape = utils.rrect(beautiful.borderradius),
     })
 
     local bottom_margin = o.bottom_margin or dpi(180)
