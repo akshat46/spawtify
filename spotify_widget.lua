@@ -245,16 +245,16 @@ spotify.widget = function(o)
             utils.pad_height(dpi(4)),
             buttons,
             layout =  wibox.layout.fixed.vertical,
-        }
+        },
         widget = wibox.container.background,
         bg = "#000000" or o.fg,
-        -- and we do rounded corners here. 
-        -- This way AwesomeWM can apply anti-aliasing, since it's between two of its own shapes: 
+        -- and we do rounded corners here.
+        -- This way AwesomeWM can apply anti-aliasing, since it's between two of its own shapes:
         --    the transparent rectangular wibox
         --    and this rounded rectangle on top of it
-        shape = utils.rrect(beautiful.borderradius), 
-    })    
-    
+        shape = utils.rrect(beautiful.borderradius),
+    })
+
     local bottom_margin = o.bottom_margin or dpi(180)
     utils.relative_position(s.spotify_widget, "bottom", bottom_margin)
     utils.relative_position(s.spotify_widget, "right", -10)
