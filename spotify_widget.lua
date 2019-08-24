@@ -194,12 +194,13 @@ spotify.widget = function(o)
 
     local s = o.screen
     width  = dpi(360) or o.width
-    height = dpi(440) or o.height
+    height = dpi(280) or o.height
     button_size = width * 0.1
     art = o.artwork or false
 
     if art then
         initArtwork()
+        height = dpi(440) or o.height
     end
     local song_data = addSongData()
     local buttons = addButtons()
@@ -342,14 +343,16 @@ function data_changed()
         end)
     end)
 
-    awful.spawn.easy_async_with_shell(command, function()
-        awful.spawn.easy_async_with_shell(spotify_commands.artwork, function(out)
-            local cmd = "wget -O "..dir.."spawtify/.cache/artwork "..out
-            awful.spawn(cmd)
-            --gears.timer.weak_start_new(artwork_callback_timer, artworkCallback):stop()
-            gears.timer.weak_start_new(artwork_callback_timer, artworkCallback):start()
+    if art then
+        awful.spawn.easy_async_with_shell(command, function()
+            awful.spawn.easy_async_with_shell(spotify_commands.artwork, function(out)
+                local cmd = "wget -O "..dir.."spawtify/.cache/artwork "..out
+                awful.spawn(cmd)
+                --gears.timer.weak_start_new(artwork_callback_timer, artworkCallback):stop()
+                gears.timer.weak_start_new(artwork_callback_timer, artworkCallback):start()
+            end)
         end)
-    end)
+    end
     collectgarbage()
 end
 
